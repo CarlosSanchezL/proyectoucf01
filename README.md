@@ -2,7 +2,6 @@
 
 Este proyecto implementa un modelo de deep learning para clasificar acciones humanas usando coordenadas 2D de esqueletos del dataset UCF101.
 Incluye preprocesamiento, data loader, modelos, entrenamiento, evaluación y predicción final.
-✅ Cumplimiento de los Requerimientos del Proyecto
 
 Este proyecto cumple con todos los puntos solicitados:
 
