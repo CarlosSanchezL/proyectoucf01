@@ -142,6 +142,7 @@ python src/train.py --pkl_path data/ucf101_2d.pkl \
   --model_type lstm --tag mejorado \
   --weight_decay 1e-4 --clip_grad 5.0 --save_results
 
+```
 ---
 
 # 📊 Resultados (Reales)
