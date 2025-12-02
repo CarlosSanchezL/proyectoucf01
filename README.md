@@ -1,38 +1,80 @@
 # Human Action Recognition with LSTM (UCF101 Skeleton Dataset)
 
-Este proyecto implementa un modelo de deep learning para clasificar acciones humanas usando coordenadas 2D de esqueletos del dataset UCF101.
-Incluye preprocesamiento, data loader, modelos, entrenamiento, evaluación y predicción final.
+Este proyecto implementa un sistema completo para **clasificación de acciones humanas** usando coordenadas 2D de esqueletos del dataset **UCF101 Skeleton**.  
+Incluye preprocesamiento, carga del dataset, modelos baseline y avanzados, entrenamiento, evaluación, mejoras y predicción desde consola.
 
-Este proyecto cumple con todos los puntos solicitados:
+---
 
-✔️ 1. Modelo de deep learning
+## ✅ Cumplimiento de los puntos solicitados por el profesor
 
--Implementado: LSTM (modelo principal)
--Baseline incluido: MLP (comparación requerida)
+### **1. Modelo de Deep Learning (Requerido)**
+- **Modelo principal:** LSTM  
+- **Baseline:** MLP (comparación obligatoria)
 
-✔️ 2. Uso de un dataset real
--Se utiliza UCF101 Skeleton 2D (.pkl) proveniente del dataset oficial.
+Ambos fueron entrenados y evaluados correctamente.
 
-✔️ 3. Pipeline completo
--Carga del dataset
--Preprocesamiento
--DataLoader
--Entrenamiento
--Validación
--Comparación baseline
--Predicción final
--Guardado del mejor modelo
+---
 
-✔️ 4. Entrenamiento y mejoras
--Se entrenó baseline y luego se mejoró con LSTM (mayor accuracy).
--Se usó regularización (weight decay) y clipping de gradiente.
+### **2. Uso de un dataset real**
+Se utiliza el archivo real:
 
-✔️ 5. Predicciones funcionales
--El modelo genera predicciones reales desde consola.
+```
+data/ucf101_2d.pkl
+```
 
-## 📁 Estructura del Proyecto
+Con los splits originales del dataset:
 
-proyecto_UCF101/
+```
+train1, train2, train3, test1, test2, test3
+```
+
+---
+
+### **3. Pipeline completo**
+El proyecto contiene:
+
+- Carga del dataset  
+- Preprocesamiento (normalización, padding/truncado)  
+- DataLoader  
+- Entrenamiento  
+- Validación  
+- Evaluación en test  
+- Comparación baseline vs mejoras  
+- Generación de predicciones  
+- Guardado automático del mejor modelo  
+
+---
+
+### **4. Entrenamiento + Mejoras (Requisito del profesor)**
+Tu profesor pidió demostrar:
+
+> “Evalúa el desempeño del modelo en su aproximación inicial y realiza ajustes para mejorar su desempeño.”
+
+Se cumplió mediante:
+
+| Modelo | Mejora implementada | Resultado |
+|--------|----------------------|-----------|
+| **MLP (baseline)** | Ninguna | Base para comparación |
+| **LSTM base** | Ninguna | Mejor que baseline |
+| **LSTM mejorado** | `weight_decay` + `grad clipping` | Mejor estabilidad y mejor val_acc |
+
+---
+
+### **5. Predicciones desde consola (Requisito del profesor)**
+Se agregó la opción:
+
+```
+--video_name NOMBRE_DEL_VIDEO
+```
+
+Para predecir un video específico.
+
+---
+
+# 📁 Estructura del Proyecto
+
+```
+proyectoucf01/
 │
 ├── data/
 │   └── ucf101_2d.pkl
@@ -43,63 +85,81 @@ proyecto_UCF101/
 │   ├── train.py
 │   └── predict_demo.py
 │
-├── checkpoints/  (se genera automáticamente)
-│   └── best_lstm.pt
+├── checkpoints/
+│   ├── best_mlp.pt
+│   ├── best_lstm.pt
+│   ├── results_mlp.json
+│   ├── results_lstm_base.json
+│   └── results_lstm_mejorado.json
 │
 ├── venv/
-│
 ├── requirements.txt
 └── README.md
+```
 
-## 📦 Instalación
+---
 
-Crear entorno virtual:
+# 📦 Instalación
 
+### 1. Crear entorno virtual
 ```bash
 python -m venv venv
 source venv/bin/activate
 ```
 
-Instalar dependencias:
-
+### 2. Instalar dependencias
 ```bash
 pip install --upgrade pip
-pip install torch numpy
+pip install numpy
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+pip install tqdm
 ```
 
+---
 
-## 🧩 Entrenamiento del Modelo
+# 🧠 Entrenamiento de los Modelos
 
+## **1. MLP Baseline**
 ```bash
-python src/train.py   --pkl_path data/ucf101_2d.pkl   --train_split train1   --val_split test1   --model_type lstm
+python src/train.py   --pkl_path data/ucf101_2d.pkl   --train_split train1   --val_split test1   --test_split test2   --model_type mlp   --save_results
 ```
 
-## 🔍 Predicciones
-
+## **2. LSTM Base**
 ```bash
-python src/predict_demo.py   --pkl_path data/ucf101_2d.pkl   --checkpoint ../checkpoints/best_lstm.pt   --model_type lstm   --split test1
+python src/train.py   --pkl_path data/ucf101_2d.pkl   --train_split train1   --val_split test1   --test_split test2   --model_type lstm   --save_results
 ```
 
-## 📊 Resultados
-
-LSTM (modelo final): Accuracy ~ 0.79 – 0.80
-
-MLP baseline: Inferior, sin captura temporal
-
-Mejoras aplicadas: LSTM + clipping + weight decay
-
-Ejemplo de predicción real:
-
+## **3. LSTM Mejorado (Clipping + Weight Decay)**
 ```bash
-Sample 0 | True: 0 | Pred: 0
-Sample 1 | True: 0 | Pred: 0
-Sample 2 | True: 0 | Pred: 1
-Sample 3 | True: 0 | Pred: 1
-Sample 4 | True: 0 | Pred: 0
-
+python src/train.py   --pkl_path data/ucf101_2d.pkl   --train_split train1   --val_split test1   --test_split test2   --model_type lstm mejorado   --weight_scale 1e-4   --clip_grad 5.0   --save_results
 ```
 
-## 👤 Autor
+---
 
-Carlos Sánchez Llanes  
+# 📊 Resultados (Reales)
+
+| Modelo | Val Acc | Test Acc |
+|--------|---------|-----------|
+| **MLP baseline** | 0.7104 | 0.6532 |
+| **LSTM base** | 0.7377 | 0.7746 |
+| **LSTM mejorado** | 0.7596 | 0.6879 |
+
+---
+
+# 🔍 Predicciones desde consola
+
+### Por índice:
+```bash
+python src/predict_demo.py   --pkl_path data/ucf101_2d.pkl   --checkpoint checkpoints/best_lstm.pt   --model_type lstm   --split test1   --index 0
+```
+
+### Por nombre de video:
+```bash
+python src/predict_demo.py   --pkl_path data/ucf101_2d.pkl   --checkpoint checkpoints/best_lstm.pt   --model_type lstm   --video_name v_ApplyEyeMakeup_g01_c01
+```
+
+---
+
+# 👤 Autor
+**Carlos Sánchez Llanes**  
 Tecnológico de Monterrey
