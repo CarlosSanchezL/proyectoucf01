@@ -131,7 +131,7 @@ python src/train.py   --pkl_path data/ucf101_2d.pkl   --train_split train1   --v
 
 ## **3. LSTM Mejorado (Clipping + Weight Decay)**
 ```bash
-python src/train.py   --pkl_path data/ucf101_2d.pkl   --train_split train1   --val_split test1   --test_split test2   --model_type lstm mejorado   --weight_scale 1e-4   --clip_grad 5.0   --save_results
+python src/train.py   --pkl_path data/ucf101_2d.pkl   --train_split train1   --val_split test1   --test_split test2   --model_type lstm   --weight_scale 1e-4   --clip_grad 5.0   --save_results
 ```
 
 ---
