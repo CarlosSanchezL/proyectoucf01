@@ -84,10 +84,8 @@ def main(args):
     input_dim = train_ds[0][0].shape[-1]
     num_classes = len(selected_labels)
 
-    if args.model_type == "mlp":
-        model = SkeletonMLPBaseline(input_dim, num_classes)
-    else:
-        model = SkeletonLSTM(input_dim, num_classes)
+    model = SkeletonMLPBaseline(input_dim, num_classes) if args.model_type == "mlp" \
+            else SkeletonLSTM(input_dim, num_classes)
 
     model = model.to(device)
 
@@ -140,6 +138,7 @@ def main(args):
     if args.save_results:
         results = {
             "model_type": args.model_type,
+            "tag": args.tag,
             "best_epoch": best_epoch,
             "val_acc": val_acc,
             "test_acc": test_acc,
@@ -147,7 +146,7 @@ def main(args):
             "clip_grad": args.clip_grad,
         }
 
-        results_path = out_dir / f"results_{args.model_type}.json"
+        results_path = out_dir / f"results_{args.model_type}_{args.tag}.json"
         with open(results_path, "w") as f:
             json.dump(results, f, indent=4)
 
@@ -158,9 +157,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--pkl_path", type=str, required=True)
-    parser.add_argument("--train_split", type=str, default="train")
-    parser.add_argument("--val_split", type=str, default="val")
-    parser.add_argument("--test_split", type=str, default="test")
+    parser.add_argument("--train_split", type=str, required=True)
+    parser.add_argument("--val_split", type=str, required=True)
+    parser.add_argument("--test_split", type=str, required=True)
 
     parser.add_argument("--seq_len", type=int, default=64)
     parser.add_argument("--batch_size", type=int, default=32)
@@ -171,8 +170,12 @@ if __name__ == "__main__":
     parser.add_argument("--clip_grad", type=float, default=0.0)
 
     parser.add_argument("--model_type", type=str, choices=["mlp", "lstm"], default="lstm")
+
+    parser.add_argument("--tag", type=str, default="run")  # 👈 NUEVO
+
     parser.add_argument("--out_dir", type=str, default="checkpoints")
     parser.add_argument("--save_results", action="store_true")
 
     args = parser.parse_args()
     main(args)
+
